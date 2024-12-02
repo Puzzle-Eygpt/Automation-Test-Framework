@@ -9,9 +9,9 @@ public class Hooks {
     public void setUp() {
         DriverManager.getDriver();
     }
-//
-//    @After
-//    public void tearDown() {
-//        DriverManager.quitDriver();
-//    }
+
+    @After
+    public void tearDown() {
+       DriverManager.quitDriver();
+   }
 }
