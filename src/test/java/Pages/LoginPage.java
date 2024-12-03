@@ -2,12 +2,16 @@ package Pages;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import utils.ElementAction;
 
 public class LoginPage {
 WebDriver driver;
+    ElementAction Action=new ElementAction(driver);
     private By usernameField = By.id("email");
     private By passwordField = By.id("password");
     private By loginButton = By.xpath("//button[@type=\"submit\"]");
+private  By dashboard=By.xpath("//span[contains(.,'Dashboard')]");
+String expectedText="Dashboard";
 
     public LoginPage(WebDriver driver) {
         this.driver = driver;
@@ -28,9 +32,11 @@ WebDriver driver;
         driver.findElement(loginButton).click();
 
     }
+
     public void performLogin(String username, String password) {
         driver.findElement(usernameField).sendKeys(username);
         driver.findElement(passwordField).sendKeys(password);
-        driver.findElement(loginButton).click();
+        Action.clickButton(driver.findElement(loginButton));
+
     }
 }
