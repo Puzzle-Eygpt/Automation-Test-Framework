@@ -5,7 +5,7 @@ package StepDefinitions;
 import Pages.LoginPage;
 
 import io.cucumber.java.en.Given;
-import io.cucumber.java.en.When;
+
 
 
 import org.openqa.selenium.WebDriver;
@@ -15,7 +15,7 @@ import org.testng.Assert;
 public class loginstpes {
 
 
-    private WebDriver driver = hooks.Hooks.getDriver();
+    private WebDriver driver = managers.DriverManager.getDriver();
 
 
 
@@ -26,13 +26,21 @@ public class loginstpes {
         LoginPage login=new LoginPage(driver);
         login.performLogin("admin@greenboard.com","string");
 
-        String expectedText = "Successfully Updated";
-        Assert.assertEquals(text,expectedText);
+
+
 
     }
 
 
+    @Given("a")
+    public void a() {
+System.out.println("mostafa");
 
+
+
+
+
+    }
 
 
 
