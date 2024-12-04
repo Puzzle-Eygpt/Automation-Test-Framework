@@ -10,8 +10,7 @@ WebDriver driver;
     private By usernameField = By.id("email");
     private By passwordField = By.id("password");
     private By loginButton = By.xpath("//button[@type=\"submit\"]");
-private  By dashboard=By.xpath("//span[contains(.,'Dashboard')]");
-String expectedText="Dashboard";
+//private By courses =By.xpath()
 
     public LoginPage(WebDriver driver) {
         this.driver = driver;
