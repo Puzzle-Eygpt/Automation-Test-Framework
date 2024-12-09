@@ -2,9 +2,6 @@ package StepDefinitions;
 
 
 
-import Api.models.UserApi;
-import Pages.LoginPage;
-
 import io.cucumber.java.en.Given;
 
 

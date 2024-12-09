@@ -13,7 +13,7 @@ public class APIService {
     // Fetch roles from the API
     public static List<Map<String, Object>> fetchRoles() {
         RestAssured.baseURI = BASE_URI;
-         String accessToken = UserApi.getAccessToken();
+         String accessToken = UserApisService.getAccessToken();
         Response response = RestAssured.given()
                 .header("Authorization", "Bearer " + accessToken)
                 .header("accept", "text/plain")

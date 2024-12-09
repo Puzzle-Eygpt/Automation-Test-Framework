@@ -8,15 +8,13 @@ import utils.RandomDataUtil;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.Map;
 
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.notNullValue;
 
 import static io.restassured.RestAssured.given;
 
-public class UserApi {
+public class UserApisService {
 
     // Base URI and endpoints
     private static final String BASE_URI = "https://portal-api.greenboard.online";
