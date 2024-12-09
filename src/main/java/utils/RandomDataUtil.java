@@ -1,5 +1,7 @@
 package utils;
 
+import org.apache.commons.lang3.RandomStringUtils;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -36,12 +38,15 @@ public class RandomDataUtil {
     }
 
     public static String generateRandomPassword() {
-        return UUID.randomUUID().toString().replace("-", "");
+        String alphanumeric = RandomStringUtils.randomAlphanumeric(20); // 8 alphanumeric characters
+        String specialChar = RandomStringUtils.random(1, "!@#$%^&*()-_+=<>?/"); // 1 special character
+        return alphanumeric + specialChar; // Combine and return
+
     }
 
     public static String generateRandomEmail() {
         String randomEmail = "user" + UUID.randomUUID().toString().substring(0, 5) + "@example.com";
-        saveCredentials(generateRandomRole(),randomEmail, generateRandomPassword(),true);  // Save email and password
+//        saveCredentials(generateRandomRole(),randomEmail, generateRandomPassword(),true);  // Save email and password
         return randomEmail;
 
     }
@@ -111,32 +116,32 @@ public class RandomDataUtil {
         int randomIndex = random.nextInt(ROLES.length);  // Selects a random index from the roles array
         return ROLES[randomIndex];  // Return the role at the selected index
     }
-    public static void saveCredentials(String role, String email, String password, boolean resetFile) {
-        // Define the file name based on the role
-        String fileName = "src/test/resources/TestData/credentials_" + role + ".json";
-
-        // Create the JSON content
-        String jsonContent = String.format("{\n  \"email\": \"%s\",\n  \"password\": \"%s\"\n}", email, password);
-
-        try {
-            // Ensure the directory exists
-            Files.createDirectories(Paths.get("src/test/resources/TestData"));
-
-            // Reset the file (clear existing content) if the flag is true
-            if (resetFile) {
-                Files.write(Paths.get(fileName), "".getBytes());
-                System.out.println("File reset for role: " + role);
-            }
-
-            // Append the new credentials
-            Files.write(Paths.get(fileName), (jsonContent + System.lineSeparator()).getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-            System.out.println("Credentials saved successfully for role: " + role);
-
-        } catch (IOException e) {
-            System.err.println("Error while saving credentials for role: " + role);
-            e.printStackTrace();
-        }
-    }
+//    public static void saveCredentials(String role, String email, String password, boolean resetFile) {
+//        // Define the file name based on the role
+//        String fileName = "src/test/resources/TestData/credentials_" + role + ".json";
+//
+//        // Create the JSON content
+//        String jsonContent = String.format("{\n  \"email\": \"%s\",\n  \"password\": \"%s\"\n}", email, password);
+//
+//        try {
+//            // Ensure the directory exists
+//            Files.createDirectories(Paths.get("src/test/resources/TestData"));
+//
+//            // Reset the file (clear existing content) if the flag is true
+//            if (resetFile) {
+//                Files.write(Paths.get(fileName), "".getBytes());
+//                System.out.println("File reset for role: " + role);
+//            }
+//
+//            // Append the new credentials
+//            Files.write(Paths.get(fileName), (jsonContent + System.lineSeparator()).getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+//            System.out.println("Credentials saved successfully for role: " + role);
+//
+//        } catch (IOException e) {
+//            System.err.println("Error while saving credentials for role: " + role);
+//            e.printStackTrace();
+//        }
+//    }
     public static String[] getCredentials() {
         try {
             List<String> lines = Files.readAllLines(Paths.get("src/test/resources/TestData/credentials.json"));

@@ -1,5 +1,5 @@
 {
-  "id": "{randomId}",
+
   "userName": "{randomUserName}",
   "passwordHash": "{randomPassword}",
   "email": "{randomEmail}",
@@ -8,14 +8,6 @@
   "fullNameAr": "{randomFullNameAr}",
   "birthDate": "{randomBirthDate}",
   "image": "{randomImage}",
-  "nationalNo": "{randomNationalNo}",
-  "createdDate": "{randomCreatedDate}",
-  "isActive": true,
-  "isDeleted": true,
-  "creationUser": "{randomUserId}",
-  "modificationDate": "{randomModifiedDate}",
-  "modificationUser": "{randomUserId}",
-  "remeberMe": true,
-  "roleId": ["{randomRoleId}"],
-  "roles": ["{randomRole}"]
+  "nationalNo": "{randomNationalNo}"
+
 }

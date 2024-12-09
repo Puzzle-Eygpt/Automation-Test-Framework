@@ -8,6 +8,11 @@ import utils.RandomDataUtil;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.Map;
+
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.notNullValue;
 
 import static io.restassured.RestAssured.given;
 
@@ -20,10 +25,13 @@ public class UserApi {
 
     // Authentication credentials
     private static final String USERNAME = "sayed";
-    private static final String PASSWORD = "Lms@123456";
-
+    private static final String PASSWORD = "Sayed@123456";
+    private static String accessToken;
+    private static String id;
+    private static String refreshToken;
     // Method to authenticate and get the token
-    public static String authenticate() {
+    public static void authenticate() {
+
         String authBody = String.format("{\n" +
                 "  \"username\": \"%s\",\n" +
                 "  \"password\": \"%s\",\n" +
@@ -31,7 +39,7 @@ public class UserApi {
                 "}", USERNAME, PASSWORD);
 
         Response authResponse = given()
-                .log().all()
+
                 .header("accept", "text/plain")
                 .header("language", "en")
                 .contentType(ContentType.JSON)
@@ -43,20 +51,40 @@ public class UserApi {
                 .response();
 
         if (authResponse.statusCode() == 200) {
-            return authResponse.jsonPath().getString("token");
+            accessToken = authResponse.jsonPath().getString("result.access_token");
+            refreshToken = authResponse.jsonPath().getString("result.refresh_token");
+
+            System.out.println("Access Token: " + accessToken);
+            System.out.println("Refresh Token: " + refreshToken);
+
         } else {
             throw new RuntimeException("Authentication failed. Status Code: " + authResponse.statusCode() +
                     ", Response Body: " + authResponse.getBody().asString());
         }
+
     }
 
+    public static String getAccessToken() {
+        if (accessToken == null || accessToken.isEmpty()) {
+            authenticate(); // Re-authenticate if the token is null or empty
+        }
+        return accessToken;
+    }
+
+    // Getter for the saved refresh token
+    public static String getRefreshToken() {
+        if (refreshToken == null || refreshToken.isEmpty()) {
+            authenticate(); // Re-authenticate if necessary
+        }
+        return refreshToken;
+    }
     // Method to generate request body by replacing placeholders with random data
     private static String generateRequestBody() throws IOException {
         // Read JSON template from file
         String requestBodyTemplate = new String(Files.readAllBytes(Paths.get("src/main/java/Api/builders/usersbody.json")));
 
         // Generate random data
-        String randomId = RandomDataUtil.generateRandomId();
+
         String randomUserName = RandomDataUtil.generateRandomUserName();
         String randomPassword = RandomDataUtil.generateRandomPassword();
         String randomEmail = RandomDataUtil.generateRandomEmail();
@@ -66,15 +94,12 @@ public class UserApi {
         String randomBirthDate = RandomDataUtil.generateRandomBirthDate();
         String randomImage = RandomDataUtil.generateRandomImage();
         String randomNationalNo = RandomDataUtil.generateRandomNationalNo();
-        String randomCreatedDate = RandomDataUtil.generateRandomCreatedDate();
-        String randomModifiedDate = RandomDataUtil.generateRandomModifiedDate();
-        String randomUserId = RandomDataUtil.generateRandomUserId();
-        String randomRoleId = RandomDataUtil.generateRandomRoleId();
-        String randomRole = RandomDataUtil.generateRandomRole();
+
+
 
         // Replace placeholders in the template with actual random values
         String requestBody = requestBodyTemplate
-                .replace("{randomId}", randomId)
+
                 .replace("{randomUserName}", randomUserName)
                 .replace("{randomPassword}", randomPassword)
                 .replace("{randomEmail}", randomEmail)
@@ -83,12 +108,8 @@ public class UserApi {
                 .replace("{randomFullNameAr}", randomFullNameAr)
                 .replace("{randomBirthDate}", randomBirthDate)
                 .replace("{randomImage}", randomImage)
-                .replace("{randomNationalNo}", randomNationalNo)
-                .replace("{randomCreatedDate}", randomCreatedDate)
-                .replace("{randomModifiedDate}", randomModifiedDate)
-                .replace("{randomUserId}", randomUserId)
-                .replace("{randomRoleId}", randomRoleId)
-                .replace("{randomRole}", randomRole);
+                .replace("{randomNationalNo}", randomNationalNo);
+
 
         return requestBody;
     }
@@ -99,8 +120,10 @@ public class UserApi {
 
         try {
             // Step 1: Authenticate and get the token
-            String token = authenticate();
-            System.out.println("Token: " + token);
+
+
+
+
 
             // Step 2: Generate the request body with random data
             String requestBody = generateRequestBody();
@@ -108,13 +131,13 @@ public class UserApi {
             // Step 3: Perform the POST request to create a new user
             Response response = given()
                     .log().all()
-                    .header("Authorization", "Bearer " + token)
+                    .header("Authorization", "Bearer " + accessToken)
                     .header("accept", "text/plain")
                     .header("language", "ar")
                     .contentType(ContentType.JSON)
                     .body(requestBody)
                     .when()
-                    .post(USER_ENDPOINT) .then()
+                    .post(BASE_URI+USER_ENDPOINT) .then()
                     .log().all() // Logs the entire response
                     .extract()
                     .response();
@@ -124,18 +147,50 @@ public class UserApi {
 
 
             // Handle different response statuses
-            if (response.statusCode() != 201) {
-                System.out.println("User creation failed. Status Code: " + response.statusCode());
-            } else {
-                System.out.println("User created successfully!");
-            }
+            System.out.println("Status Code: " + response.statusCode());
+            System.out.println("Response Body: " + response.asString());
 
-        } catch (IOException e) {
+            if (response.jsonPath().getBoolean("isSuccess")) {
+
+            } else {
+                String errorMessage = response.jsonPath().getString("message");
+                System.err.println("User creation failed. Reason: " + errorMessage);
+            }
+        } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("Failed to read or process the request body.");
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-            System.out.println("Authentication failed.");
         }
+    }
+    public  static void  getCreatedUser() {
+        RestAssured.baseURI =BASE_URI;
+        // Make the GET request
+        Response response = given()
+                .log().all()
+                .header("Authorization", "Bearer " + accessToken)
+                .header("accept", "text/plain")
+                .header("language", "en")
+                .queryParam("IsActive", "true")
+                .queryParam("PageNumber", "1")
+                .queryParam("PageSize", "10")
+                .when()
+                .get("/api/users/search");
+        response.then().statusCode(200);
+
+        // Optionally: Assert that response body contains specific values
+        // For example, checking if the response contains some expected keys
+        response.then().body("result", notNullValue());
+
+        // Print response details for debugging
+        System.out.println("Status Code: " + response.getStatusCode());
+        System.out.println("Response Body: " + response.getBody().asString());
+    }
+
+
+
+    public static void validateCreatedUser(Response response) {
+        // Validate the response
+        response.then()
+                .statusCode(200) // Ensure the status code is 200
+                .body("data", notNullValue()) // Ensure "data" field is present
+                .body("data.size()", greaterThan(0)); // Ensure there are users in the data
     }
 }
