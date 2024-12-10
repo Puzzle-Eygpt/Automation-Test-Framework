@@ -38,7 +38,7 @@ public class RandomDataUtil {
     }
 
     public static String generateRandomPassword() {
-        String alphanumeric = RandomStringUtils.randomAlphanumeric(20); // 8 alphanumeric characters
+        String alphanumeric = RandomStringUtils.randomAlphanumeric(20); // 20 alphanumeric characters
         String specialChar = RandomStringUtils.random(1, "!@#$%^&*()-_+=<>?/"); // 1 special character
         return alphanumeric + specialChar; // Combine and return
 
