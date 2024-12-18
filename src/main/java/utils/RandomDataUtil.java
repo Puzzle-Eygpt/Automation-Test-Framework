@@ -5,11 +5,14 @@ import org.apache.commons.lang3.RandomStringUtils;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Base64;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -40,7 +43,10 @@ public class RandomDataUtil {
     public static String generateRandomPassword() {
         String alphanumeric = RandomStringUtils.randomAlphanumeric(20); // 20 alphanumeric characters
         String specialChar = RandomStringUtils.random(1, "!@#$%^&*()-_+=<>?/"); // 1 special character
-        return alphanumeric + specialChar; // Combine and return
+        String rawPassword = alphanumeric + specialChar;
+
+        // URL encode the password
+        return URLEncoder.encode(rawPassword, StandardCharsets.UTF_8);
 
     }
 
